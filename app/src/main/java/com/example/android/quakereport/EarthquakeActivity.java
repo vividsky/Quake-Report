@@ -24,29 +24,27 @@ import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-    public static final String LOG_TAG = EarthquakeActivity.class.getName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
         // Create a fake list of earthquake locations.
-        ArrayList<String> earthquakes = new ArrayList<>();
-        earthquakes.add("San Francisco");
-        earthquakes.add("London");
-        earthquakes.add("Tokyo");
-        earthquakes.add("Mexico City");
-        earthquakes.add("Moscow");
-        earthquakes.add("Rio de Janeiro");
-        earthquakes.add("Paris");
+        ArrayList<EarthQuake> earthquakes = new ArrayList<>();
+        earthquakes.add(new EarthQuake("7.2", "San Francisco", "Feb 2, 2016"));
+        earthquakes.add(new EarthQuake("6.2", "London", "Mar 3, 2020"));
+        earthquakes.add(new EarthQuake("6.2", "Tokyo", "Mar 3, 2020"));
+        earthquakes.add(new EarthQuake("6.2", "Mexico City", "Mar 3, 2020"));
+        earthquakes.add(new EarthQuake("6.2", "Moscow", "Mar 3, 2020"));
+        earthquakes.add(new EarthQuake("6.2", "Rio de Janeiro", "Mar 3, 2020"));
+        earthquakes.add(new EarthQuake("6.2", "Paris", "Mar 3, 2020"));
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = findViewById(R.id.list);
 
         // Create a new {@link ArrayAdapter} of earthquakes
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_list_item_1, earthquakes);
+        EarthQuackAdapter adapter = new EarthQuackAdapter(this, earthquakes);
+
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
