@@ -2,31 +2,81 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="@dimen/default_dimension"
+    android:layout_height="match_parent"
+    android:minHeight="@dimen/default_dimension"
     android:padding="16dp"
     android:id="@+id/earthquake_list"
     >
     <TextView
-        android:layout_width="0dp"
+        android:layout_width="56dp"
         android:id="@+id/magnitude"
-        android:layout_height="match_parent"
+        android:background="@drawable/magnitude_circle"
+        android:layout_height="56dp"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="sans-serif-medium"
         tools:ignore="Suspicious0dp"
         android:text="7.2"
-        android:layout_weight="1"/>
-    <TextView
-        android:layout_width="0dp"
-        android:id="@+id/location"
-        android:layout_height="match_parent"
-        tools:ignore="Suspicious0dp"
-        android:text="India"
-        android:layout_weight="2"/>
-    <TextView
-        android:layout_width="0dp"
-        android:id="@+id/date"
-        android:text="feb 2020"
-        android:layout_height="match_parent"
-        tools:ignore="Suspicious0dp"
-        android:layout_weight="1"/>
+        android:gravity="center"
+        android:textSize="24sp"
+        />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.5"
+            android:paddingLeft="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/locationArea"
+                android:textAllCaps="true"
+                android:textColor="@color/details_of_location"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="India" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/locationPlace"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:textColor="@color/location"
+                android:fontFamily="sans-serif-medium"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:text="India" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/dateFormat"
+            android:maxLines="1"
+            android:text="feb 2020"
+            android:textColor="@color/details_of_location"
+            android:layout_gravity="end"
+            android:layout_height="match_parent"
+            tools:ignore="Suspicious0dp"
+    />
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/timeFormat"
+            android:text="feb 2020"
+            android:textColor="@color/details_of_location"
+            android:layout_gravity="end"
+            android:layout_height="match_parent"
+            tools:ignore="Suspicious0dp"
+    />
+        </LinearLayout>
+
 
 
 </LinearLayout>

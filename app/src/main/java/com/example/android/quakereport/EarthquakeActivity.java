@@ -15,10 +15,16 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -30,14 +36,9 @@ public class EarthquakeActivity extends AppCompatActivity {
         setContentView(R.layout.earthquake_activity);
 
         // Create a fake list of earthquake locations.
-        ArrayList<EarthQuake> earthquakes = new ArrayList<>();
-        earthquakes.add(new EarthQuake("7.2", "San Francisco", "Feb 2, 2016"));
-        earthquakes.add(new EarthQuake("6.2", "London", "Mar 3, 2020"));
-        earthquakes.add(new EarthQuake("6.2", "Tokyo", "Mar 3, 2020"));
-        earthquakes.add(new EarthQuake("6.2", "Mexico City", "Mar 3, 2020"));
-        earthquakes.add(new EarthQuake("6.2", "Moscow", "Mar 3, 2020"));
-        earthquakes.add(new EarthQuake("6.2", "Rio de Janeiro", "Mar 3, 2020"));
-        earthquakes.add(new EarthQuake("6.2", "Paris", "Mar 3, 2020"));
+        final ArrayList<EarthQuake> earthquakes = QueryUtils.extractEarthquakes();
+
+
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = findViewById(R.id.list);
@@ -45,9 +46,18 @@ public class EarthquakeActivity extends AppCompatActivity {
         // Create a new {@link ArrayAdapter} of earthquakes
         EarthQuackAdapter adapter = new EarthQuackAdapter(this, earthquakes);
 
-
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(adapter);
+
+        earthquakeListView.setOnItemClickListener((parent, view, position, id) -> {
+
+            EarthQuake earthQuake = (EarthQuake) earthquakes.get(position);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(earthQuake.get_url()));
+
+            startActivity(intent);
+
+        });
     }
 }
