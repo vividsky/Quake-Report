@@ -8,10 +8,6 @@ More info on the USGS Earthquake API available at:
 https://earthquake.usgs.gov/fdsnws/event/1/
 
 
-APK for the Quake Report App
-----------------------------
-In APK directory
-
 
 
 
