@@ -20,10 +20,11 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class EarthQuackAdapter extends ArrayAdapter{
-    public EarthQuackAdapter(@NonNull Context context, ArrayList<EarthQuake> objects) {
+    public EarthQuackAdapter(@NonNull Context context, List<EarthQuake> objects) {
         super(context, 0, objects);
     }
 
