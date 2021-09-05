@@ -2,4 +2,7 @@
 
 <resources>
     <string name="app_name">Quake Report</string>
+    <string name="onEmptyView">Welcome</string>
+    <string name="contentNotFound">Content not found.</string>
+    <string name="noInternet">No Internet Connection.</string>
 </resources>

@@ -1,56 +1,65 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.example.android.quakereport;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.loader.content.Loader;
 
-import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity {
-    private EarthQuackAdapter adapter;
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<EarthQuake>> {
 
+    private ListView earthquakeListView;
+    private TextView mEmptyStateTextView;
+    private ProgressBar progressBar;
+    private EarthQuackAdapter adapter;
+    private static final String LOG_TAG = EarthquakeActivity.class.getSimpleName();
 
     /** Sample JSON response for a USGS query */
-    private static final String USGS_REQUEST_URL =  "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=4";
+    private final String USGS_REQUEST_URL =  "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=4";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
+        Log.i(LOG_TAG, "*************************Executing onCreate**************************");
 
-        // Create a fake list of earthquake locations.
-        EarthQuakeAsyncTask task = new EarthQuakeAsyncTask();
-        task.execute(USGS_REQUEST_URL);
+//        // Create a list of earthquake locations.
+//        EarthQuakeAsyncTask task = new EarthQuakeAsyncTask();
+//        task.execute(USGS_REQUEST_URL);
+
+        progressBar = findViewById(R.id.progress_bar);
+
 
         // Create a new {@link ArrayAdapter} of earthquakes
         adapter = new EarthQuackAdapter(this, new ArrayList<>());
 
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = findViewById(R.id.list);
+        earthquakeListView = findViewById(R.id.list);
+
+        mEmptyStateTextView = findViewById(R.id.oops_moment);
+        earthquakeListView.setEmptyView(mEmptyStateTextView);
+
+
+
+
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
@@ -65,34 +74,102 @@ public class EarthquakeActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
+        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
 
     }
 
-    public class EarthQuakeAsyncTask extends AsyncTask<String, Void, List<EarthQuake>> {
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    @NonNull
+    @Override
+    public Loader<List<EarthQuake>> onCreateLoader(int id, @Nullable Bundle bundle) {
+        Log.i(LOG_TAG, "************************Executing onCreateLoader************************");
+
+        return new EarthquakeLoader(this, USGS_REQUEST_URL);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<List<EarthQuake>> loader, List<EarthQuake> data) {
+        Log.i(LOG_TAG, "************************Executing onLoadFinished************************");
+
+        progressBar.setVisibility(View.GONE);
+
+        if(!isNetworkConnected()) {
+            mEmptyStateTextView.setText(R.string.noInternet);
+        } else {
+            mEmptyStateTextView.setText(R.string.contentNotFound);
+        }
+
+        //Clear the adapter of previous earthquake data
+        adapter.clear();
+
+        // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
+        // data set. This will trigger the ListView to update.
+        if (data != null && !data.isEmpty()) {
+            adapter.addAll(data);
+        } else {
+//            Toast.makeText(EarthquakeActivity.this, "No data to show", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader loader) {
+        Log.i(LOG_TAG, "Executing onLoaderReset");
+            adapter.clear();
+    }
+
+    //    public class EarthQuakeAsyncTask extends AsyncTask<String, Void, List<EarthQuake>> {
+//
+//        @Override
+//        protected List<EarthQuake> doInBackground(String... urls) {
+//            if(urls.length == 0) {
+//                return null;
+//            }
+//            List<EarthQuake> data = QueryUtils.fetchDataFromEarthquake(urls[0]);
+//            return data;
+//        }
+//        @Override
+//        protected void onPostExecute(List<EarthQuake> data) {
+//            super.onPostExecute(data);
+//
+//            // Clear the adapter of previous earthquake data
+//            adapter.clear();
+//
+//            // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
+//            // data set. This will trigger the ListView to update.
+//            if (data != null && !data.isEmpty()) {
+//                adapter.addAll(data);
+//            } else {
+//                Toast.makeText(EarthquakeActivity.this, "No data to show", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//    }
+
+    private static class EarthquakeLoader extends AsyncTaskLoader<List<EarthQuake>> {
+        String url;
+        public EarthquakeLoader(@NonNull Context context, String url) {
+
+            super(context);
+            this.url = url;
+        }
+
+        @Nullable
         @Override
-        protected List<EarthQuake> doInBackground(String... urls) {
-            if(urls.length == 0) {
+        public List<EarthQuake> loadInBackground() {
+            Log.i(LOG_TAG, "************************Executing loadInBackground************************");
+            if(url == null) {
                 return null;
             }
-            List<EarthQuake> data = QueryUtils.fetchDataFromEarthquake(urls[0]);
+            List<EarthQuake> data = QueryUtils.fetchDataFromEarthquake(url);
             return data;
         }
-        @Override
-        protected void onPostExecute(List<EarthQuake> data) {
-            super.onPostExecute(data);
-
-            // Clear the adapter of previous earthquake data
-            adapter.clear();
-
-            // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
-            // data set. This will trigger the ListView to update.
-            if (data != null && !data.isEmpty()) {
-                adapter.addAll(data);
-            } else {
-                Toast.makeText(EarthquakeActivity.this, "No data to show", Toast.LENGTH_SHORT).show();
-            }
-        }
-
     }
+
 }
+

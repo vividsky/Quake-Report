@@ -80,7 +80,7 @@ public class EarthQuackAdapter extends ArrayAdapter{
      * Return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
      */
     private String dateFormat(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM DD, yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM dd, yyyy");
         return dateFormat.format(date);
     }
     /**
